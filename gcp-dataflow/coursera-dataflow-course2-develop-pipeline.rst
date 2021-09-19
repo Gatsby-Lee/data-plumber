@@ -25,7 +25,7 @@ Fore main concepts
 * **Pipelines:** Identifies "the date to be processed" and "the action to be taken on the data"
 * **Pipeline Runners:**
 
-.. image:: ./images/gcp-dataflow-wk2-1.png
+.. image:: ./images/gcp-dataflow-course2-wk1-1.png
 
 
 Utility Transforms
@@ -46,9 +46,9 @@ DoFn Lifecycle
 
 ParDo: kind of simple "map" or "filter"
 
-.. image:: ./images/gcp-dataflow-wk2-2.png
-.. image:: ./images/gcp-dataflow-wk2-3.png
-.. image:: ./images/gcp-dataflow-wk2-4.png
+.. image:: ./images/gcp-dataflow-course2-wk1-2.png
+.. image:: ./images/gcp-dataflow-course2-wk1-3.png
+.. image:: ./images/gcp-dataflow-course2-wk1-4.png
 
 
 references
@@ -130,7 +130,7 @@ Windows in Beam
 Processing time
 >>>>>>>>>>>>>>>
 
-.. image:: ./images/gcp-dataflow-wk2-5.png
+.. image:: ./images/gcp-dataflow-course2-wk1-5.png
 
 * Using `current timestamp` assigned to every new message by Dataflow.
 * This is the same as micro batching.
@@ -141,7 +141,7 @@ Processing time
 Event Time
 >>>>>>>>>>
 
-.. image:: ./images/gcp-dataflow-wk2-6.png
+.. image:: ./images/gcp-dataflow-course2-wk1-6.png
 
 Using timestamp in the orginal message
 
@@ -149,7 +149,7 @@ Using timestamp in the orginal message
 Types of windows in Beam
 >>>>>>>>>>>>>>>>>>>>>>>>
 
-.. image:: ./images/gcp-dataflow-wk2-7.png
+.. image:: ./images/gcp-dataflow-course2-wk1-7.png
 
 * **Fixed:** none-overlapping interval
 * **Sliding:** may overlap interval, calculating a moving average
@@ -172,8 +172,8 @@ Watermarks
     * how to define late data?
 
 
-.. image:: ./images/gcp-dataflow-wk2-8.png
-.. image:: ./images/gcp-dataflow-wk2-9.png
+.. image:: ./images/gcp-dataflow-course2-wk1-8.png
+.. image:: ./images/gcp-dataflow-course2-wk1-9.png
 
 * The relationship between `processing timestamp` and `event timestamp` defines the watermark.
 * Any msg before the watermak is considered to be `early`
@@ -183,17 +183,17 @@ Watermarks
   * Dataflow estimates it with the oldest timestamp waiting to be processed.
   * The watermark estimation is continuously updated with every new received msg.
 
-.. image:: ./images/gcp-dataflow-wk2-10.png
+.. image:: ./images/gcp-dataflow-course2-wk1-10.png
 
 * **Lag time:** the difference between expected and actual arriving time.
 * the deviation from the ideal expectation(lag time) is `watermark`.
 
-.. image:: ./images/gcp-dataflow-wk2-11.png
+.. image:: ./images/gcp-dataflow-course2-wk1-11.png
 
 * I have to make a decision what I would do with the late data.
 * The default behavior is to drop the late data.
 
-.. image:: ./images/gcp-dataflow-wk2-12.png
+.. image:: ./images/gcp-dataflow-course2-wk1-12.png
 
 
 Triggers
