@@ -27,7 +27,7 @@ Fore main concepts
 
   * analogous to Kubernete Engine.
   * The pipeline can be on local computer, in a VM, in data center, in Cloud (like Data Flow). - main difference is scalability
-  * 
+  *
 
 Batch programming vs. Stream processing
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -210,7 +210,7 @@ You decide when "Windows" emit the results.
 
 .. image:: ./images/gcp-dataflow-course2-wk1-8.png
 .. image:: ./images/gcp-dataflow-course2-wk1-9.png
- 
+
 * The relationship between `processing timestamp` and `event timestamp` defines the watermark.
 * Any msg before the watermak is considered to be `early`
 * Watermark defines if the msg is late or not.
@@ -371,3 +371,126 @@ Sources & Sinks
 * BigTable IO
 * Avro IO
 * Splittable DoFn
+
+
+Beam schemas
+============
+
+* All PCollection must consist of elements of the same type.
+* By understanding the structure of a pipeline's records, we can provide much more concise APOs for data processing.
+
+
+What is a schema?
+-----------------
+
+* A schema describes a type in terms of fields and values.
+* Fields can have string names or be numerical indexed.
+* There is a known list of primitive types a field can have like int, long, and string.
+* some fileds can be marked as optional
+* Schemas can be nested arbitrarily, and can contain repeated or map fields as well.
+
+References about Schema
+-----------------------
+
+* https://beam.apache.org/documentation/programming-guide/#schemas
+* https://github.com/GoogleCloudPlatform/dataflow-sample-applications/tree/master/retail/retail-java-applications
+
+
+State and Timer
+===============
+
+State API: aggregations
+-----------------------
+
+* two main transforms: GroupByKey or CombinePerkey
+* ParDo ( Map ) can't do aggregation. Why?
+
+
+State API: Stateful ParDo
+-------------------------
+
+* Example use case: by keeping things into Buffer, we can reduce external call ( call to resource by grouping them. )
+
+.. image:: ./images/gcp-dataflow-course2-wk2-1.png
+.. image:: ./images/gcp-dataflow-course2-wk2-2.png
+.. image:: ./images/gcp-dataflow-course2-wk2-3.png
+
+
+Timer API
+---------
+
+* Processing-time timers: Callback after a certain amount of time has elapsed.
+
+  * timeouts
+  * Relative times("in 5 min")
+  * Periodic output based on state
+
+* """Event-time:""" callback when the watermark reaches some threshold.
+
+     * Output based on completeness of input data
+     * Absolute tiems ("when the data is complete up to 5:00am")
+     * Final/authoritative outputs
+     * Don't leave data behind in state!
+
+
+Types of state variables
+------------------------
+
+* Value: Read/write any value (but always the whole value)
+* Bag: Cheap append No ordering on read
+* Combining: Associative/commutative compaction
+* Map: Read/write just keys you specify
+* Set: Membershihp checking ( Dataflow runner is not supported. )
+
+
+Stateful ParDo with state and timers
+-------------------------------------
+
+.. image:: ./images/gcp-dataflow-course2-wk2-4.png
+
+
+Beam Best Pratices
+==================
+
+Schemas
+-------
+
+.. image:: ./images/gcp-dataflow-course2-wk2-5.png
+
+
+Handling unprocessable data / Error Handling
+---------------------------------------------
+
+* Errors and exceptions are part of any data processing pipeline.
+* Within the DoFn, always use a try-catch block around actiities like parsing data.
+* In the exception block, send the erroneous records to a separate sink, instead of just logging the issue.
+* Use tuple tags to access multiple outputs from the PCollection.
+
+
+Utilize DoFn lifecycle
+----------------------
+
+.. image:: ./images/gcp-dataflow-course2-wk2-6.png
+
+
+Pipeline Optimizations
+----------------------
+
+Filter data early
+>>>>>>>>>>>>>>>>>
+
+1. Filter data early in pipeline whenever possible
+2. Mve any steps that reduce data volume up in your pipeline
+
+Apply data transformations serially
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+1. Apply data transformations serially to let Dataflow optimize DAG
+2. Transforms applied serially are good candidates for graph optimization because multiple steps can be fused in a single stage for execution in the same worker node.
+
+Handle back pressure from external systems
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+1. While working with external systems, look out for back pressure.
+2. Ensure external system are configured to handle peak volume
+3. Enable autoscaling to downscale if workers are underutilized.
